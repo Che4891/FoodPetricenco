@@ -134,12 +134,13 @@ window.addEventListener("DOMContentLoaded", () => {
 //Создаем карточки через Class
 
 class ProductCard {
-  constructor( img, alt, title, description, price, perentSelector) {
+  constructor( img, alt, title, description, price, perentSelector, ...classes) {
     this.price = price;
     this.alt = alt;
     this.title = title;
     this.description = description;
     this.img = img;
+    this.classes = classes;
     this.perent = document.querySelector(perentSelector)
     this.transfer = 27;
     this.changeUa()
@@ -148,9 +149,14 @@ class ProductCard {
     this.price = +this.price * this.transfer;
   }
   render() {
-    const element = document.createElement('div')
-    element.innerHTML = `<div class="menu__item">
-    <img src=${this.img} alt=${this.alt} />
+    const element = document.createElement('div');
+    if (this.classes.length === 0) {
+      element.classList.add('menu__item')
+    }
+    else {
+      this.classes.forEach(clasName => element.classList.add('menu__item'))
+    }
+    element.innerHTML = `<img src=${this.img} alt=${this.alt} />
     <h3 class="menu__item-subtitle">${this.title}</h3>
     <div class="menu__item-descr">
     ${this.description}
@@ -159,8 +165,7 @@ class ProductCard {
     <div class="menu__item-price">
       <div class="menu__item-cost">Цена:</div>
       <div class="menu__item-total"><span>${this.price}</span> грн/день</div>
-    </div>
-  </div>`
+    </div>`
     this.perent.append(element)
   }
 }
@@ -168,9 +173,9 @@ class ProductCard {
 new ProductCard('img/tabs/vegy.jpg', 'elite', 'Меню "Фитнес"', 'Меню "Фитнес" - это новый подход к приготовлению блюд: больше свежих овощей и фруктов. Продукт активных и здоровых людей. Это абсолютно новый продукт с оптимальной ценой и высоким качеством!', 9, '.menu .container').render()
 
 
-new ProductCard('img/tabs/post.jpg', 'post', 'В меню “Премиум” мы используем не только красивый дизайн упаковки, но и качественное исполнение блюд. Красная рыба, морепродукты, фрукты - ресторанное меню без похода в ресторан!', 9, '.menu .container').render()
+new ProductCard('img/tabs/post.jpg', 'post', 'Меню "Премиум"', 'В меню “Премиум” мы используем не только красивый дизайн упаковки, но и качественное исполнение блюд. Красная рыба, морепродукты, фрукты - ресторанное меню без похода в ресторан!', 9, '.menu .container', 'menu__item').render()
 
-new ProductCard('img/tabs/vegy.jpg', 'vegy', 'Меню “Постное” - это тщательный подбор ингредиентов: полное отсутствие продуктов животного происхождения, молоко из миндаля, овса, кокоса или гречки, правильное количество белков за счет тофу и импортных вегетарианских стейков.', 20, '.menu .container').render() // тоже что записать const div = new ProductCard; div.render()
+new ProductCard('img/tabs/vegy.jpg', 'vegy', 'Меню "Постное"', 'Меню “Постное” - это тщательный подбор ингредиентов: полное отсутствие продуктов животного происхождения, молоко из миндаля, овса, кокоса или гречки, правильное количество белков за счет тофу и импортных вегетарианских стейков.', 20, '.menu .container', 'menu__item').render() // тоже что записать const div = new ProductCard; div.render()
 
 
 //Мой способ он не нужен
