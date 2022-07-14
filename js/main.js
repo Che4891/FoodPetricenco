@@ -231,3 +231,46 @@ new ProductCard('img/tabs/vegy.jpg', 'vegy', 'Меню "Постное"', 'Ме�
 // }
 
 // cardList(cards);
+
+
+// Forms отправка завпросов на сервер
+
+const form = document.querySelectorAll('form'); // на сайте 2 формы, помещаем в переменную
+const message = {
+  loading: 'Looding',
+  success: "Success",
+  fail: 'Somsing wron...'
+}
+
+form.forEach(item => { // перебераем масив, выбираем каждую из форм
+  postData(item)
+})
+
+function postData(form) { // в эту функцию попадает по очереди каждая форма 
+  form.addEventListener('submit', (e) => {
+    e.preventDefault();
+
+    const statusMessage = document.createElement('div');
+    statusMessage.classList.add('status');
+    statusMessage.textContent = message.loading;
+    form.append(statusMessage);
+
+    const request = new XMLHttpRequest(); //начинаем работу с запросом на сервер
+    request.open('POST', 'server.php');
+
+    request.setRequestHeader('Content-type', 'multipart/form-data');
+    const formData = new FormData(form);
+
+    request.send(formData);
+
+    request.addEventListener('load', () => {
+      if (request.status === 200) {
+        console.log(request.response);
+        statusMessage.textContent = message.success;
+      }
+      else {
+        statusMessage.textContent = message.fail;
+      }
+    })
+  })
+}
