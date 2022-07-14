@@ -257,16 +257,35 @@ function postData(form) { // в эту функцию попадает по оч
 
     const request = new XMLHttpRequest(); //начинаем работу с запросом на сервер
     request.open('POST', 'server.php');
+    
+    
+    //Если передавать данные в формате JSON это будет выглядить так:
+      //request.setRequestHeader('Content-type', 'application/json');
+      //const formData = new FormData(form);
+      //const odject = {};
+      // formData.forEach(function (value, key) {
+      //   object[key] = value;
+      // });
+      // const json = JSON.stringify(object);
+      // request.send(json)
 
-    request.setRequestHeader('Content-type', 'multipart/form-data');
+
+    //Если обычный формат
+    // Записывать в хедер заголовка не нужно если использовать FormData
+    // FormData будет работать только если у инпутов есть атрибут name
+    // request.setRequestHeader('Content-type', 'multipart/form-data');
     const formData = new FormData(form);
 
     request.send(formData);
 
-    request.addEventListener('load', () => {
+    request.addEventListener('load', () => { // проверяем ответ и выводим сообщение
       if (request.status === 200) {
         console.log(request.response);
         statusMessage.textContent = message.success;
+        form.reset();
+        setTimeout(() => {
+          statusMessage.remove();
+        }, 4000);
       }
       else {
         statusMessage.textContent = message.fail;
