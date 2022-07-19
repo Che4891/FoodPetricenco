@@ -91,31 +91,30 @@ window.addEventListener("DOMContentLoaded", () => {
   modalOpenBtn.forEach((item) => {
     item.addEventListener("click", openModal);
   }),
-
-  function closeModal() {
-    modal.classList.add('hide');
-    modal.classList.remove("show");
-    document.body.style.overflow = "";
-    document.body.style.paddingRight = 0 + "px";
-  }
+    function closeModal() {
+      modal.classList.add("hide");
+      modal.classList.remove("show");
+      document.body.style.overflow = "";
+      document.body.style.paddingRight = 0 + "px";
+    };
 
   function openModal() {
     modal.classList.add("show");
-    modal.classList.remove('hide');
+    modal.classList.remove("hide");
     document.body.style.overflow = "hidden";
     document.body.style.paddingRight = 16 + "px";
     clearInterval(modalTimerId);
   }
-    modal.addEventListener("click", (event) => {
-      if (
-        event.target === modal ||
-        event.target.getAttribute("data-close") == ""
-      ) {
-        closeModal();
-      }
-    });
+  modal.addEventListener("click", (event) => {
+    if (
+      event.target === modal ||
+      event.target.getAttribute("data-close") == ""
+    ) {
+      closeModal();
+    }
+  });
   document.addEventListener("keydown", (e) => {
-    if (e.code === "Escape" && modal.classList.contains('show')) {
+    if (e.code === "Escape" && modal.classList.contains("show")) {
       closeModal();
     }
   });
@@ -278,6 +277,57 @@ window.addEventListener("DOMContentLoaded", () => {
     postData(item);
   });
 
+  // отправка запроса на сервер через XMLHttpRequest()
+
+  // function postData(form) {
+  //   // в эту функцию попадает по очереди каждая форма
+  //   form.addEventListener("submit", (event) => {
+  //     event.preventDefault();
+
+  //     let statusMessage = document.createElement("img");
+  //     statusMessage.src = message.loading;
+  //     statusMessage.style.cssText = `display:block;
+  //     margin: 0 auto;`;
+
+  //     form.insertAdjacentElement("afterend", statusMessage);
+
+  //     const request = new XMLHttpRequest(); //начинаем работу с запросом на сервер
+  //     request.open("POST", "server.php");
+
+  //     //Если передавать данные в формате JSON это будет выглядить так:
+  //     //request.setRequestHeader('Content-type', 'application/json');
+  //     //const formData = new FormData(form);
+  //     //const odject = {};
+  //     // formData.forEach(function (value, key) {
+  //     //   object[key] = value;
+  //     // });
+  //     // const json = JSON.stringify(object);
+  //     // request.send(json)
+
+  //     //Если обычный формат
+  //     // Записывать в хедер заголовка не нужно если использовать FormData
+  //     // FormData будет работать только если у инпутов есть атрибут name
+  //     // request.setRequestHeader('Content-type', 'multipart/form-data');
+  //     const formData = new FormData(form);
+
+  //     request.send(formData);
+
+  //     request.addEventListener("load", () => {
+  //       // проверяем ответ и выводим сообщение
+  //       if (request.status === 200) {
+  //         console.log(request.response);
+  //         showThanksModal(message.success);
+  //         statusMessage.remove();
+  //         form.reset();
+  //       } else {
+  //         showThanksModal(message.fail);
+  //       }
+  //     });
+  //   });
+  // }
+
+  // Отправка такого же запроса но через FETCH
+
   function postData(form) {
     // в эту функцию попадает по очереди каждая форма
     form.addEventListener("submit", (event) => {
@@ -288,48 +338,37 @@ window.addEventListener("DOMContentLoaded", () => {
       statusMessage.style.cssText = `display:block;
       margin: 0 auto;`;
 
-      form.insertAdjacentElement('afterend', statusMessage);
+      form.insertAdjacentElement("afterend", statusMessage);
 
-      const request = new XMLHttpRequest(); //начинаем работу с запросом на сервер
-      request.open("POST", "server.php");
-
-      //Если передавать данные в формате JSON это будет выглядить так:
-      //request.setRequestHeader('Content-type', 'application/json');
-      //const formData = new FormData(form);
-      //const odject = {};
-      // formData.forEach(function (value, key) {
-      //   object[key] = value;
-      // });
-      // const json = JSON.stringify(object);
-      // request.send(json)
-
-      //Если обычный формат
-      // Записывать в хедер заголовка не нужно если использовать FormData
-      // FormData будет работать только если у инпутов есть атрибут name
-      // request.setRequestHeader('Content-type', 'multipart/form-data');
       const formData = new FormData(form);
 
-      request.send(formData);
-
-      request.addEventListener("load", () => {
-        // проверяем ответ и выводим сообщение
-        if (request.status === 200) {
-          console.log(request.response);
-          showThanksModal(message.success);
-          statusMessage.remove();
-          form.reset();
-        } else {
-          showThanksModal(message.fail);
-        }
-      });
+      fetch("server.php", {
+        method: "POST",
+        // headers: {
+        //   "Content-type": "application/json", // используем только при JSON
+        // },
+        //body: JSON.stringify(object)   используем только при JSON
+        body: formData,
+      }).then((data)=> {
+        return data.text()
+      }).then((data) => {
+        console.log(data);
+        showThanksModal(message.success);
+        statusMessage.remove();
+      }).catch(() => {
+        showThanksModal(message.fail);
+      }).finally(() => {
+        form.reset();
+      })
     });
   }
+
   function showThanksModal(message) {
     const prevModalDialog = document.querySelector(".modal__dialog");
 
     prevModalDialog.classList.add("hide");
     openModal();
-    
+
     const thanksModal = document.createElement("div");
     thanksModal.classList.add("modal__dialog");
     thanksModal.innerHTML = `<div class="modal__content">
@@ -347,5 +386,7 @@ window.addEventListener("DOMContentLoaded", () => {
     }, 5000);
   }
 
-
+  fetch('http://localhost:3000/menu')
+    .then(data => data.json())
+    .then(res => console.log(res))
 });
