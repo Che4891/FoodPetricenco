@@ -85,18 +85,19 @@ window.addEventListener("DOMContentLoaded", () => {
 
   // MODAL WINDOW
 
-  const modalOpenBtn = document.querySelectorAll("[data-modal]");
-  const modal = document.querySelector(".modal");
+  const modalOpenBtn = document.querySelectorAll("[data-modal]"),
+    modal = document.querySelector(".modal");
 
   modalOpenBtn.forEach((item) => {
     item.addEventListener("click", openModal);
-  }),
-    function closeModal() {
-      modal.classList.add("hide");
-      modal.classList.remove("show");
-      document.body.style.overflow = "";
-      document.body.style.paddingRight = 0 + "px";
-    };
+  });
+
+  function closeModal() {
+    modal.classList.add("hide");
+    modal.classList.remove("show");
+    document.body.style.overflow = "";
+    document.body.style.paddingRight = 0 + "px";
+  }
 
   function openModal() {
     modal.classList.add("show");
@@ -105,11 +106,9 @@ window.addEventListener("DOMContentLoaded", () => {
     document.body.style.paddingRight = 16 + "px";
     clearInterval(modalTimerId);
   }
-  modal.addEventListener("click", (event) => {
-    if (
-      event.target === modal ||
-      event.target.getAttribute("data-close") == ""
-    ) {
+
+  modal.addEventListener("click", (e) => {
+    if (e.target === modal || e.target.getAttribute("data-close") == "") {
       closeModal();
     }
   });
@@ -180,63 +179,99 @@ window.addEventListener("DOMContentLoaded", () => {
     }
   }
 
-  new ProductCard(
-    "img/tabs/vegy.jpg",
-    "elite",
-    'Меню "Фитнес"',
-    'Меню "Фитнес" - это новый подход к приготовлению блюд: больше свежих овощей и фруктов. Продукт активных и здоровых людей. Это абсолютно новый продукт с оптимальной ценой и высоким качеством!',
-    9,
-    ".menu .container"
-  ).render();
+  const getResource = async (url) => {
+    let res = await fetch(url);
+    if (!res.ok) {
+      throw new Error(`Could not fetch ${url}, status: ${res.status}`);
+    }
+    return await res.json();
+  };
 
-  new ProductCard(
-    "img/tabs/post.jpg",
-    "post",
-    'Меню "Премиум"',
-    "В меню “Премиум” мы используем не только красивый дизайн упаковки, но и качественное исполнение блюд. Красная рыба, морепродукты, фрукты - ресторанное меню без похода в ресторан!",
-    9,
-    ".menu .container",
-    "menu__item"
-  ).render();
+ // get запрос через axios (нам не нужно всего что мы делали в getResource, тоесть не нужно fetch и т. д.)
 
-  new ProductCard(
-    "img/tabs/vegy.jpg",
-    "vegy",
-    'Меню "Постное"',
-    "Меню “Постное” - это тщательный подбор ингредиентов: полное отсутствие продуктов животного происхождения, молоко из миндаля, овса, кокоса или гречки, правильное количество белков за счет тофу и импортных вегетарианских стейков.",
-    20,
-    ".menu .container",
-    "menu__item"
-  ).render(); // тоже что записать const div = new ProductCard; div.render()
+  axios.get("http://localhost:3000/menu").then((data) => {
+    data.data.forEach(({ img, altimg, title, descr, price }) => {
+      new ProductCard(
+        img,
+        altimg,
+        title,
+        descr,
+        price,
+        ".menu .container"
+      ).render();
+    });
+  });
+
+   // getResource("http://localhost:3000/menu").then((data) => {
+  //   //  data.forEach((obj )=> { // обичный формат
+  //   //    new ProductCard(obj.img, obj.alt, obj.title, obj.description, obj.price, obj.classes).render();
+  //   //  })
+  //   data.forEach(({ img, altimg, title, descr, price }) => {
+  //     // Делаем деструктаризацию тоесть сразу раскрываем обект который пришол в data с помощью {} скобок
+  //     new ProductCard(
+  //       img,
+  //       altimg,
+  //       title,
+  //       descr,
+  //       price,
+  //       ".menu .container"
+  //     ).render();
+  //   }); // вытягиваем даннве с сервера и этим заменяем тот статисный код что в низу
+  // });
+
+  // new ProductCard(
+  //   "img/tabs/vegy.jpg",
+  //   "elite",
+  //   'Меню "Фитнес"',
+  //   'Меню "Фитнес" - это новый подход к приготовлению блюд: больше свежих овощей и фруктов. Продукт активных и здоровых людей. Это абсолютно новый продукт с оптимальной ценой и высоким качеством!',
+  //   9,
+  //   ".menu .container"
+  // ).render();
+
+  // new ProductCard(
+  //   "img/tabs/post.jpg",
+  //   "post",
+  //   'Меню "Премиум"',
+  //   "В меню “Премиум” мы используем не только красивый дизайн упаковки, но и качественное исполнение блюд. Красная рыба, морепродукты, фрукты - ресторанное меню без похода в ресторан!",
+  //   9,
+  //   ".menu .container",
+  //   "menu__item"
+  // ).render();
+
+  // new ProductCard(
+  //   "img/tabs/vegy.jpg",
+  //   "vegy",
+  //   'Меню "Постное"',
+  //   "Меню “Постное” - это тщательный подбор ингредиентов: полное отсутствие продуктов животного происхождения, молоко из миндаля, овса, кокоса или гречки, правильное количество белков за счет тофу и импортных вегетарианских стейков.",
+  //   20,
+  //   ".menu .container",
+  //   "menu__item"
+  // ).render(); // тоже что записать const div = new ProductCard; div.render()
 
   //Мой способ он не нужен
 
-  // let cards = [
-  //   {
-  //     img: 'img/tabs/vegy.jpg" alt="vegy',
-  //     alt: "vegy",
-  //     title: 'Меню "Фитнес"',
-  //     description:
-  //       'Меню "Фитнес" - это новый подход к приготовлению блюд: больше свежих овощей и фруктов. Продукт активных и здоровых людей. Это абсолютно новый продукт с оптимальной ценой и высоким качеством!',
-  //     price: "229",
-  //   },
-  //   {
-  //     img: "img/tabs/elite.jpg",
-  //     alt: "elite",
-  //     title: "Меню “Премиум”",
-  //     description:
-  //       "В меню “Премиум” мы используем не только красивый дизайн упаковки, но и качественное исполнение блюд. Красная рыба, морепродукты, фрукты - ресторанное меню без похода в ресторан!",
-  //     price: "550",
-  //   },
-  //   {
-  //     img: "img/tabs/post.jpg",
-  //     alt: "post",
-  //     title: 'Меню "Постное"',
-  //     description:
-  //       "Меню “Постное” - это тщательный подбор ингредиентов: полное отсутствие продуктов животного происхождения, молоко из миндаля, овса, кокоса или гречки, правильное количество белков за счет тофу и импортных вегетарианских стейков.",
-  //     price: "430",
-  //   },
-  // ];
+  // getResource("http://localhost:3000/menu").then((data) => {
+  //   data.forEach(({ img, altimg, title, descr, price }) => {
+  //     const wrapper = document.querySelector(".menu__field");
+  //     const container = wrapper.querySelector(".container");
+
+  //       container.insertAdjacentHTML(
+  //         "beforeend",
+  //         `<div class="menu__item">
+  //     <img src="${img}" alt="${altimg}" />
+  //     <h3 class="menu__item-subtitle">${title}"</h3>
+  //     <div class="menu__item-descr">
+  //     ${descr}
+  //     </div>
+  //     <div class="menu__item-divider"></div>
+  //     <div class="menu__item-price">
+  //       <div class="menu__item-cost">Цена:</div>
+  //       <div class="menu__item-total"><span>${price * 27}</span> грн/день</div>
+  //     </div>
+  //   </div>`
+  //       );
+  //   });
+  // });
 
   // function cardList(cards) {
   //   const wrapper = document.querySelector(".menu__field");
@@ -274,12 +309,24 @@ window.addEventListener("DOMContentLoaded", () => {
 
   form.forEach((item) => {
     // перебераем масив, выбираем каждую из форм
-    postData(item);
+    bindPostData(item);
   });
+
+  const postData = async (url, data) => {
+    let res = await fetch(url, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: data,
+    });
+
+    return await res.json();
+  };
 
   // отправка запроса на сервер через XMLHttpRequest()
 
-  // function postData(form) {
+  // function postData(form) { // в новом коде postData меняеться на bindPostData - это тело в котором выполняесться код а postData - это функция в которую прокидываються переменные для bindPostData
   //   // в эту функцию попадает по очереди каждая форма
   //   form.addEventListener("submit", (event) => {
   //     event.preventDefault();
@@ -328,38 +375,35 @@ window.addEventListener("DOMContentLoaded", () => {
 
   // Отправка такого же запроса но через FETCH
 
-  function postData(form) {
+  function bindPostData(form) {
     // в эту функцию попадает по очереди каждая форма
-    form.addEventListener("submit", (event) => {
-      event.preventDefault();
+    form.addEventListener("submit", (e) => {
+      e.preventDefault();
 
       let statusMessage = document.createElement("img");
       statusMessage.src = message.loading;
-      statusMessage.style.cssText = `display:block;
-      margin: 0 auto;`;
-
+      statusMessage.style.cssText = `
+          display: block;
+          margin: 0 auto;
+      `;
       form.insertAdjacentElement("afterend", statusMessage);
 
       const formData = new FormData(form);
 
-      fetch("server.php", {
-        method: "POST",
-        // headers: {
-        //   "Content-type": "application/json", // используем только при JSON
-        // },
-        //body: JSON.stringify(object)   используем только при JSON
-        body: formData,
-      }).then((data)=> {
-        return data.text()
-      }).then((data) => {
-        console.log(data);
-        showThanksModal(message.success);
-        statusMessage.remove();
-      }).catch(() => {
-        showThanksModal(message.fail);
-      }).finally(() => {
-        form.reset();
-      })
+      const json = JSON.stringify(Object.fromEntries(formData.entries())); // превращение обекта в JSON формат
+
+      postData("http://localhost:3000/requests", json)
+        .then((data) => {
+          console.log(data);
+          showThanksModal(message.success);
+          statusMessage.remove();
+        })
+        .catch(() => {
+          showThanksModal(message.failure);
+        })
+        .finally(() => {
+          form.reset();
+        });
     });
   }
 
@@ -371,22 +415,22 @@ window.addEventListener("DOMContentLoaded", () => {
 
     const thanksModal = document.createElement("div");
     thanksModal.classList.add("modal__dialog");
-    thanksModal.innerHTML = `<div class="modal__content">
-      <div data-close="" class="modal__close">×</div>
-      <div class="modal__title">
-        ${message}
-      </div>
-  </div>`;
+    thanksModal.innerHTML = `
+        <div class="modal__content">
+            <div class="modal__close" data-close>×</div>
+            <div class="modal__title">${message}</div>
+        </div>
+    `;
     document.querySelector(".modal").append(thanksModal);
     setTimeout(() => {
       thanksModal.remove();
       prevModalDialog.classList.add("show");
       prevModalDialog.classList.remove("hide");
       closeModal();
-    }, 5000);
+    }, 4000);
   }
 
-  fetch('http://localhost:3000/menu')
-    .then(data => data.json())
-    .then(res => console.log(res))
+  // fetch("http://localhost:3000/menu")  // тестирую как работает json-server
+  //   .then((data) => data.json())
+  //   .then((res) => console.log(res));
 });
