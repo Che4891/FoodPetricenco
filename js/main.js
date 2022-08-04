@@ -543,13 +543,12 @@ window.addEventListener("DOMContentLoaded", () => {
   let offset = 0;
 
   if (slider.length < 10) {
-      total.textContent = `0${slider.length}`;
-      current.textContent = `0${slideIndex}`
-    }
-    else {
-      total.textContent =  slider.length;
-      current.textContent = slideIndex;
-    }
+    total.textContent = `0${slider.length}`;
+    current.textContent = `0${slideIndex}`;
+  } else {
+    total.textContent = slider.length;
+    current.textContent = slideIndex;
+  }
 
   wrap.style.width = 100 * slider.length + "%";
   wrap.style.display = "flex";
@@ -562,50 +561,118 @@ window.addEventListener("DOMContentLoaded", () => {
   btnNext.addEventListener("click", () => {
     if (offset == +width.slice(0, width.length - 2) * (slider.length - 1)) {
       offset = 0;
-    }
-    else {
+    } else {
       offset += +width.slice(0, width.length - 2);
     }
     wrap.style.transform = `translateX(-${offset}px)`;
-    
+
     if (slideIndex == slider.length) {
-      slideIndex = 1
-    }
-    else {
+      slideIndex = 1;
+    } else {
       slideIndex++;
     }
 
     if (slider.length < 10) {
-      current.textContent = `0${slideIndex}`
-    }
-    else {
+      current.textContent = `0${slideIndex}`;
+    } else {
       current.textContent = slideIndex;
     }
+
+    dots.forEach(dot => dot.style.opacity = '0.5');
+    dots[slideIndex - 1].style.opacity = 1;
   });
 
   btnPrev.addEventListener("click", () => {
     if (offset == 0) {
       offset = +width.slice(0, width.length - 2) * (slider.length - 1);
-    }
-    else {
+    } else {
       offset -= +width.slice(0, width.length - 2);
     }
 
     if (slideIndex == 1) {
-      slideIndex = slider.length
-    }
-    else {
+      slideIndex = slider.length;
+    } else {
       slideIndex--;
     }
 
     if (slider.length < 10) {
-      current.textContent = `0${slideIndex}`
-    }
-    else {
+      current.textContent = `0${slideIndex}`;
+    } else {
       current.textContent = slideIndex;
     }
     wrap.style.transform = `translateX(-${offset}px)`;
+
+    dots.forEach(dot => dot.style.opacity = '0.5');
+    dots[slideIndex - 1].style.opacity = 1;
   });
+
+  //добавление булетов
+
+  const mainWrap = document.querySelector('.offer__slider')
+  mainWrap.style.position = 'relative';
+  let dots = [];
+
+  const indicators = document.createElement("ol");
+  indicators.classList.add("carousel-indicators");
+  indicators.style.cssText = `
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 15;
+    display: flex;
+    justify-content: center;
+    margin-right: 15%;
+    margin-left: 15%;
+    list-style: none;
+  `;
+  mainWrap.append(indicators); 
+
+
+  for (let index = 0; index < slider.length; index++) {
+    const dot = document.createElement('li');
+    dot.setAttribute('data-slide-to', index + 1);
+    dot.style.cssText = `
+    box-sizing: content-box;
+    flex: 0 1 auto;
+    width: 30px;
+    height: 6px;
+    margin-right: 3px;
+    margin-left: 3px;
+    cursor: pointer;
+    background-color: #fff;
+    background-clip: padding-box;
+    border-top: 10px solid transparent;
+    border-bottom: 10px solid transparent;
+    opacity: .5;
+    transition: opacity .6s ease;
+    `
+    if (index == 0) {
+      dot.style.opacity = 1;
+    }
+    indicators.append(dot);
+
+    dots.push(dot)
+  }
+  dots.forEach(dot => {
+    dot.addEventListener('click', (e) => {
+      const slideTo = e.target.getAttribute('data-slide-to');
+      
+      slideIndex = slideTo;
+      offset = +width.slice(0, width.length - 2) * (slideTo - 1);
+      
+    if (slider.length < 10) {
+      current.textContent = `0${slideIndex}`;
+    } else {
+      current.textContent = slideIndex;
+    }
+    wrap.style.transform = `translateX(-${offset}px)`;
+
+    dots.forEach(dot => dot.style.opacity = '0.5');
+    dots[slideIndex - 1].style.opacity = 1;
+    })
+     
+  })
 
   // fetch("http://localhost:3000/menu")  // тестирую как работает json-server npx json-server --watch db.json
   //   .then((data) => data.json())
