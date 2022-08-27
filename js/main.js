@@ -35,7 +35,7 @@ window.addEventListener("DOMContentLoaded", () => {
 
   // TIMER
 
-  const deadline = "2022-08-20";
+  const deadline = "2022-09-20";
 
   function getTimeRemaining(endtime) {
     const t = Date.parse(endtime) - Date.parse(new Date()),
@@ -578,7 +578,7 @@ window.addEventListener("DOMContentLoaded", () => {
       current.textContent = slideIndex;
     }
 
-    dots.forEach(dot => dot.style.opacity = '0.5');
+    dots.forEach((dot) => (dot.style.opacity = "0.5"));
     dots[slideIndex - 1].style.opacity = 1;
   });
 
@@ -602,14 +602,14 @@ window.addEventListener("DOMContentLoaded", () => {
     }
     wrap.style.transform = `translateX(-${offset}px)`;
 
-    dots.forEach(dot => dot.style.opacity = '0.5');
+    dots.forEach((dot) => (dot.style.opacity = "0.5"));
     dots[slideIndex - 1].style.opacity = 1;
   });
 
   //добавление булетов
 
-  const mainWrap = document.querySelector('.offer__slider')
-  mainWrap.style.position = 'relative';
+  const mainWrap = document.querySelector(".offer__slider");
+  mainWrap.style.position = "relative";
   let dots = [];
 
   const indicators = document.createElement("ol");
@@ -626,12 +626,11 @@ window.addEventListener("DOMContentLoaded", () => {
     margin-left: 15%;
     list-style: none;
   `;
-  mainWrap.append(indicators); 
-
+  mainWrap.append(indicators);
 
   for (let index = 0; index < slider.length; index++) {
-    const dot = document.createElement('li');
-    dot.setAttribute('data-slide-to', index + 1);
+    const dot = document.createElement("li");
+    dot.setAttribute("data-slide-to", index + 1);
     dot.style.cssText = `
     box-sizing: content-box;
     flex: 0 1 auto;
@@ -646,33 +645,147 @@ window.addEventListener("DOMContentLoaded", () => {
     border-bottom: 10px solid transparent;
     opacity: .5;
     transition: opacity .6s ease;
-    `
+    `;
     if (index == 0) {
       dot.style.opacity = 1;
     }
     indicators.append(dot);
 
-    dots.push(dot)
+    dots.push(dot);
   }
-  dots.forEach(dot => {
-    dot.addEventListener('click', (e) => {
-      const slideTo = e.target.getAttribute('data-slide-to');
-      
+  dots.forEach((dot) => {
+    dot.addEventListener("click", (e) => {
+      const slideTo = e.target.getAttribute("data-slide-to");
+
       slideIndex = slideTo;
       offset = +width.slice(0, width.length - 2) * (slideTo - 1);
-      
-    if (slider.length < 10) {
-      current.textContent = `0${slideIndex}`;
-    } else {
-      current.textContent = slideIndex;
-    }
-    wrap.style.transform = `translateX(-${offset}px)`;
 
-    dots.forEach(dot => dot.style.opacity = '0.5');
-    dots[slideIndex - 1].style.opacity = 1;
+      if (slider.length < 10) {
+        current.textContent = `0${slideIndex}`;
+      } else {
+        current.textContent = slideIndex;
+      }
+      wrap.style.transform = `translateX(-${offset}px)`;
+
+      dots.forEach((dot) => (dot.style.opacity = "0.5"));
+      dots[slideIndex - 1].style.opacity = 1;
+    });
+  });
+
+  // CALC
+
+  const result = document.querySelector(".calculating__result span");
+
+  let sex, height, weight, age, ratio;
+
+
+  if(localStorage.getItem('sex')) {
+    sex = localStorage.getItem('sex')
+    console.log(sex);
+  }else {
+    sex ="female";
+    localStorage.setItem('sex', 'female')
+  }
+  if(localStorage.getItem('ratio')) {
+    ratio = localStorage.getItem('ratio')
+  }else {
+    ratio =1.375;
+    localStorage.setItem('ratio', 1.375)
+  }
+
+  function initlocalSetting(selector, activeClass) {
+    const elements = document.querySelectorAll(selector);
+    elements.forEach(item => {
+      item.classList.remove(activeClass);
+      if (item.getAttribute('id') === localStorage.getItem('sex')) {
+        item.classList.add(activeClass);
+      }
+      if (item.getAttribute('data-ratio') === localStorage.getItem('ratio')) {
+        item.classList.add(activeClass);
+      }
     })
-     
-  })
+  }
+  initlocalSetting("#gender div", "calculating__choose-item_active");
+  initlocalSetting(".calculating__choose_big div",
+  "calculating__choose-item_active")
+
+  function calcTotal() {
+    if (!sex || !height || !weight || !age || !ratio) {
+      result.textContent = "----";
+      return;
+    }
+    console.log(888, sex, height, weight, age);
+
+    if (sex === "female") {
+      result.textContent =
+        Math.round((447.6 + 9.2 * weight + 3.1 * height - 4.3 * age) * ratio);
+    } else {
+      result.textContent =
+      Math.round((88.36 + 13.4 * weight + 4.8 * height - 5.7 * age) * ratio);
+    }
+  }
+  calcTotal();
+
+  function getStaticInformation(selector, activeClass) {
+    const element = document.querySelectorAll(selector);
+
+    element.forEach(elem => {
+      elem.addEventListener("click", (e) => {
+        if (e.target.getAttribute("data-ratio")) {
+          ratio = +e.target.getAttribute("data-ratio");
+          localStorage.setItem('ratio', +e.target.getAttribute("data-ratio"))
+        } else {
+          sex = e.target.getAttribute("id");
+          console.log(e.target.getAttribute("id"));
+          localStorage.setItem('sex', e.target.getAttribute("id"))
+        }
+        element.forEach((item) => {
+          item.classList.remove(activeClass);
+        });
+        e.target.classList.add(activeClass);
+  
+        calcTotal();
+      });
+    })
+  }
+  getStaticInformation("#gender div", "calculating__choose-item_active");
+  getStaticInformation(
+    ".calculating__choose_big div",
+    "calculating__choose-item_active"
+  );
+
+  function getDynamicInformation(selector) {
+    const input = document.querySelector(selector);
+
+    input.addEventListener("input", () => {
+
+      if(input.value.match(/\D/g)){
+        console.log('NAn');
+        input.style.border = '1px solid red';
+      }else {
+        console.log('number');
+        input.style.border = 'none'
+      }
+
+      switch (input.getAttribute("id")) {
+        case "height":
+          height = +input.value;
+          break;
+
+        case "weight":
+          weight = +input.value;
+          break;
+
+        case "age":
+          age = +input.value;
+          break;
+      }
+      calcTotal();
+    });
+  }
+  getDynamicInformation('#height');
+  getDynamicInformation('#weight');
+  getDynamicInformation('#age');
 
   // fetch("http://localhost:3000/menu")  // тестирую как работает json-server npx json-server --watch db.json
   //   .then((data) => data.json())
