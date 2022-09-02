@@ -109,9 +109,9 @@ const total = document.querySelector("#total");
 // });
 
 //SLIDER (правильное решение)
-(wrapper = document.querySelector(".offer__slider-wrapper")),
-  (wrap = document.querySelector(".offer__slider-wrap")),
-  (width = window.getComputedStyle(wrapper).width);
+const wrapper = document.querySelector(".offer__slider-wrapper"),
+  wrap = document.querySelector(".offer__slider-wrap"),
+  width = window.getComputedStyle(wrapper).width;
 let offset = 0;
 
 if (slider.length < 10) {
@@ -245,4 +245,4 @@ dots.forEach((dot) => {
 });
 }
 
-module.exports = slider;
+export default slider;

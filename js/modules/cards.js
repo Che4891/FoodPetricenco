@@ -165,4 +165,4 @@ function cards() {
   // cardList(cards);
 }
 
-module.exports = cards
+export default cards
