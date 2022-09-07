@@ -5,14 +5,18 @@ import form from './modules/form';
 import cards from './modules/cards';
 import calc from './modules/calculete';
 import slider from './modules/slider';
+import {openModal} from './modules/modal'
 
 
 window.addEventListener("DOMContentLoaded", () => {
 
+  const modalTimerId = setTimeout(() => openModal(".modal", modalTimerId), 30000);
+
+
         calc();
         cards();
-        form();
-        modal();
+        form("form", modalTimerId);
+        modal("[data-modal]", ".modal", modalTimerId);
         slider();
         tabs();
         timer();

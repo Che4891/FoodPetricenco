@@ -324,7 +324,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
-function form () {
+/* harmony import */ var _modal__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./modal */ "./js/modules/modal.js");
+
+
+function form (modalTimerId) {
       // Forms отправка завпросов на сервер
 
   const form = document.querySelectorAll("form"); // на сайте 2 формы, помещаем в переменную
@@ -438,7 +441,7 @@ function form () {
     const prevModalDialog = document.querySelector(".modal__dialog");
 
     prevModalDialog.classList.add("hide");
-    openModal();
+    (0,_modal__WEBPACK_IMPORTED_MODULE_0__.openModal)(".modal", modalTimerId);
 
     const thanksModal = document.createElement("div");
     thanksModal.classList.add("modal__dialog");
@@ -453,7 +456,7 @@ function form () {
       thanksModal.remove();
       prevModalDialog.classList.add("show");
       prevModalDialog.classList.remove("hide");
-      closeModal();
+      (0,_modal__WEBPACK_IMPORTED_MODULE_0__.closeModal)(".modal");
     }, 4000);
   }
 }
@@ -470,53 +473,59 @@ function form () {
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */   "closeModal": () => (/* binding */ closeModal),
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__),
+/* harmony export */   "openModal": () => (/* binding */ openModal)
 /* harmony export */ });
-function modal() {
-      // MODAL WINDOW
-
-  const modalOpenBtn = document.querySelectorAll("[data-modal]"),
-  modal = document.querySelector(".modal");
-
-modalOpenBtn.forEach((item) => {
-  item.addEventListener("click", openModal);
-});
-
-function closeModal() {
+function closeModal(modalSelector) {
+  modal = document.querySelector(modalSelector);
   modal.classList.add("hide");
   modal.classList.remove("show");
   document.body.style.overflow = "";
   document.body.style.paddingRight = 0 + "px";
 }
 
-function openModal() {
+function openModal(modalSelector, modalTimerId) {
+  modal = document.querySelector(modalSelector);
+  console.log(modal);
   modal.classList.add("show");
   modal.classList.remove("hide");
   document.body.style.overflow = "hidden";
   document.body.style.paddingRight = 16 + "px";
-  clearInterval(modalTimerId);
+  console.log(modalTimerId);
+  if (modalTimerId) {
+    clearInterval(modalTimerId);
+  }
 }
+
+function modal(triggerSelector, modalSelector, modalTimerId) {
+      // MODAL WINDOW
+
+  const modalOpenBtn = document.querySelectorAll(triggerSelector),
+  modal = document.querySelector(modalSelector);
+
+modalOpenBtn.forEach((item) => {
+  item.addEventListener("click",() => openModal(modalSelector, modalTimerId));
+});
+
 
 modal.addEventListener("click", (e) => {
   if (e.target === modal || e.target.getAttribute("data-close") == "") {
-    closeModal();
+    closeModal(modalSelector);
   }
 });
 document.addEventListener("keydown", (e) => {
   if (e.code === "Escape" && modal.classList.contains("show")) {
-    closeModal();
+    closeModal(modalSelector);
   }
 });
-// setting modal window
-
-const modalTimerId = setTimeout(openModal, 30000);
 
 function showModalByScroll() {
   if (
     window.pageYOffset + document.documentElement.clientHeight >=
     document.documentElement.scrollHeight
   ) {
-    openModal();
+    openModal(modalSelector, modalTimerId);
     window.removeEventListener("scroll", showModalByScroll);
   }
 }
@@ -525,6 +534,8 @@ window.addEventListener("scroll", showModalByScroll);
 }
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (modal);
+
+
 
 /***/ }),
 
@@ -986,12 +997,16 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
+
 window.addEventListener("DOMContentLoaded", () => {
+
+  const modalTimerId = setTimeout(() => (0,_modules_modal__WEBPACK_IMPORTED_MODULE_1__.openModal)(".modal", modalTimerId), 30000);
+
 
         (0,_modules_calculete__WEBPACK_IMPORTED_MODULE_5__["default"])();
         (0,_modules_cards__WEBPACK_IMPORTED_MODULE_4__["default"])();
-        (0,_modules_form__WEBPACK_IMPORTED_MODULE_3__["default"])();
-        (0,_modules_modal__WEBPACK_IMPORTED_MODULE_1__["default"])();
+        (0,_modules_form__WEBPACK_IMPORTED_MODULE_3__["default"])(modalTimerId);
+        (0,_modules_modal__WEBPACK_IMPORTED_MODULE_1__["default"])("[data-modal]", ".modal", modalTimerId);
         (0,_modules_slider__WEBPACK_IMPORTED_MODULE_6__["default"])();
         (0,_modules_tabs__WEBPACK_IMPORTED_MODULE_2__["default"])();
         (0,_modules_timer__WEBPACK_IMPORTED_MODULE_0__["default"])();
